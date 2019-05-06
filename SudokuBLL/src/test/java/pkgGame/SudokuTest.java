@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import pkgEnum.eGameDifficulty;
+
 public class SudokuTest {
 
 /*	private void PrintStars() {
@@ -129,14 +131,48 @@ public class SudokuTest {
 	{
 		try {
 			Sudoku s1 = new Sudoku(9);
-			s1.PrintPuzzle();
-			assertTrue(s1.isSudoku());
+			//s1.PrintPuzzle();
+			assertTrue(s1.isPartialSudoku());
 
 		} catch (Exception e) {
 			fail("Test failed to build a Sudoku");
 		}
 	}
+	
+	@Test
+	public void isDifficultyMetTest() throws Exception {
+		Sudoku s = new Sudoku(9,eGameDifficulty.EASY);
+		assertTrue(s.IsDifficultyMet(10));
+	}
+	@Test
+	public void isDifficultyMetTest1() throws Exception{
+		Sudoku s = new Sudoku(9,eGameDifficulty.EASY);
+		assertFalse(s.IsDifficultyMet(9));
+	}
+	
+	@Test
+	public void isDifficultyMetTest2() throws Exception{
+		Sudoku s = new Sudoku(9, eGameDifficulty.HARD);
+		assertFalse(s.IsDifficultyMet(30));
+	}
 
+	@Test
+	public void isDifficultyMetTest3() throws Exception{
+		Sudoku s = new Sudoku(9, eGameDifficulty.MEDIUM);
+		assertTrue(s.IsDifficultyMet(40));
+	}
+
+	@Test
+	public void sudokuPuzzleTest() {
+		try {
+			Sudoku s1 = new Sudoku(9,eGameDifficulty.MEDIUM);
+			s1.PrintPuzzle();
+			assertTrue(s1.isPartialSudoku());
+
+		} catch (Exception e) {
+			fail("Test failed to build a Sudoku");
+		}
+	}
 
 
 }

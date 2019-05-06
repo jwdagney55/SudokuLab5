@@ -13,6 +13,7 @@ import java.util.Random;
 import pkgEnum.ePuzzleViolation;
 import pkgHelper.LatinSquare;
 import pkgHelper.PuzzleViolation;
+import pkgEnum.eGameDifficulty;
  
 
 /**
@@ -77,7 +78,8 @@ public class Sudoku extends LatinSquare implements Serializable {
 		FillDiagonalRegions();
 		SetCells();		
 		fillRemaining(this.cells.get(Objects.hash(0, iSqrtSize)));
-		
+		this.eGD = eGameDifficulty.EASY;
+		removeCells();
 	}
 
 	/**
@@ -659,4 +661,104 @@ public class Sudoku extends LatinSquare implements Serializable {
 
 		}
 	}
+	
+	// Lab 5 methods
+	
+	public boolean IsDifficultyMet(int iPercentage) {
+		int desiredPctRemove = eGD.getiPctRemove();
+		if(iPercentage<desiredPctRemove) {
+			return false;
+		}
+		else
+			return true;
+	}
+	
+
+	private eGameDifficulty eGD;
+	
+	public Sudoku() throws Exception {
+		this(9);
+		this.eGD=pkgEnum.eGameDifficulty.EASY;
+		removeCells();
+	}
+	
+	public Sudoku(int size, eGameDifficulty eGD) throws Exception{
+		this(size);
+		this.eGD = eGD;
+		removeCells();
+	}
+	
+	private void removeCells() throws Exception{
+		int zeros_added=0;
+		int elements=this.iSize*this.iSize;
+		int percentToRemove;
+		if (this.eGD==pkgEnum.eGameDifficulty.EASY) {
+			percentToRemove= 15 + (int)(Math.random()*15);
+		}
+		else if (this.eGD==pkgEnum.eGameDifficulty.MEDIUM) {
+			percentToRemove= 35 + (int)(Math.random()*25);
+		}
+		else {
+			percentToRemove= 70 + (int)(Math.random()*5);
+		}
+		
+		
+		boolean finished=false;
+		int percentChanged=0;
+		while (finished==false) {
+			int row=(int)(Math.random()*this.iSize);
+			int col=(int)(Math.random()*this.iSize);
+			if (row==this.iSize) {
+				row--;
+			}
+			if (col==this.iSize) {
+				col--;
+			}
+			if (this.getPuzzle()[row][col]!=0) {
+				zeros_added++;
+				this.getPuzzle()[row][col]=0;
+			}
+			
+			percentChanged=(int)(((double) zeros_added/elements)*100);
+			if (percentChanged>percentToRemove) {
+				finished=true;
+			}
+		}
+		
+		
+	}
+	/*
+	private static int possibleValuesMultiplier(HashMap<Integer,Sudoku.SudokuCell> cells) throws Exception{
+		Sudoku puzzle = new Sudoku();
+		puzzle.PrintPuzzle();
+		boolean finished=false;
+		int possibleValues=1;
+		
+		while (finished==false){
+			int col=(int) (9*Math.random());
+			int row=(int) (9*Math.random());
+			if (col==9) {
+				col=8;
+			}
+			if (row==9) {
+				row=8;
+			}
+			puzzle.getPuzzle()[row][col]=0;
+			possibleValues=1;
+			for (Map.Entry<Integer,Sudoku.SudokuCell> pair : cells.entrySet()) {
+				Sudoku.SudokuCell c = pair.getValue();
+				int vals=c.getLstValidValues().size();
+				possibleValues=vals*possibleValues;
+			}
+			if (possibleValues>100) {
+				finished=true;
+			}
+			
+		}
+		puzzle.PrintPuzzle();
+		
+		return Integer.MAX_VALUE;
+	}
+	*/
 }
+
